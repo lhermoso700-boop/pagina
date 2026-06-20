@@ -8,7 +8,16 @@ navToggle.addEventListener('click', () => {
   navToggle.classList.toggle('animate-toggle');
 });
 /*=============== REMOVE MENU MOBILE ===============*/
+const navLink = document.querySelectorAll('.nav-link');
 
+function linkAction() {
+  const navMenu = document.getElementById('nav-menu');
+
+  navMenu.classList.remove('show-menu');
+  navToggle.classList.remove('animate-toggle');
+}
+
+navLink.forEach((a) => a.addEventListener('click', linkAction));
 /*=============== CHANGE BACKGROUND HEADER ===============*/
 const scrollHeader = () => {
   const header = document.getElementById('header');
@@ -20,7 +29,26 @@ const scrollHeader = () => {
 
 window.addEventListener('scroll', scrollHeader);
 /*=============== SCROLL SECTIONS ACTIVE LINK ===============*/
+const sections = document.querySelectorAll('section[id]');
 
+const scrollActive = () => {
+  const scrollY = window.pageYOffset;
+
+  sections.forEach((current) => {
+    const sectionHeight = current.offsetHeight,
+      sectionTop = current.offsetTop - 50,
+      sectionId = current.getAttribute('id'),
+      sectionClass = document.querySelector('.nav-menu a[href*=' + sectionId + ']');
+
+    if (scrollY > sectionTop && scrollY <= sectionTop + sectionHeight) {
+      sectionClass.classList.add('active-link');
+    } else {
+      sectionClass.classList.remove('active-link');
+    }
+  });
+};
+
+window.addEventListener('scroll', scrollActive);
 /*=============== SERVICES SWIPER ===============*/
 var serviceSwiper = new Swiper(".service-swiper", {
     spaceBetween: 32,
@@ -101,6 +129,54 @@ var testimonialsSwiper = new Swiper('.testimonials-swiper', {
     },
 });
 /*=============== EMAIL JS ===============*/
+const contactForm = document.getElementById('contact-form'),
+  contactName = document.getElementById('contact-name'),
+  contactEmail = document.getElementById('contact-email'),
+  contactSubject = document.getElementById('contact-subject'),
+  contactMessage = document.getElementById('contact-message'),
+  message = document.getElementById('message');
+
+const sendEmail = (e) => {
+  e.preventDefault();
+
+  if (
+    contactName.value === '' ||
+    contactEmail.value === '' ||
+    contactSubject.value === '' ||
+    contactMessage.value === ''
+  ) {
+    message.textContent = 'Write all the input fields';
+    message.classList.add('color-red');
+
+    setTimeout(() => {
+      message.textContent = '';
+    }, 3000);
+  } else {
+    emailjs.sendForm('service_u6xzmek', 'template_u7zotdi', '#contact-form', 'd_xiaRAlvO9nTH3v2').then(
+        () => {
+            message.textContent = 'Message sent ✔';
+            message.classList.add('color-first');
+
+            setTimeout(() => {
+                message.textContent = '';
+            }, 5000);
+
+        },
+        (error) => {
+            alert('OOPs! SOMETHING WENT WRONG...', error);
+        }
+    );
+
+    contactName.value = '';
+    contactEmail.value = '';
+    contactSubject.value = '';
+    contactMessage.value = '';
+
+  }
+};
+
+emailjs.init('service_u6xzmek');
+contactForm.addEventListener('submit', sendEmail);
 
 /*=============== STYLE SWITCHER ===============*/
 
@@ -111,3 +187,10 @@ var testimonialsSwiper = new Swiper('.testimonials-swiper', {
 /*=============== THEME COLORS ===============*/
 
 /*=============== LIGHT/DARK MODE ===============*/
+const themeButton = document.getElementById('theme-toggle');
+  
+
+themeButton.addEventListener('click', () => {
+  document.body.classList.toggle('dark-theme');
+  themeButton.classList.toggle('ri-sun-line');
+});
